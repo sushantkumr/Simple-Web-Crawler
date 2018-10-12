@@ -60,7 +60,7 @@ class Crawler():
             return
         else:
             self.index += 1
-            if self.index <= len(self.crawled_urls):
+            if self.index < len(self.crawled_urls):
                 self.crawl(self.crawled_urls[self.index])
             else:
                 return
