@@ -1,7 +1,7 @@
 from urllib.parse import urljoin, urlparse
 
 
-def check_if_invalid(link):
+def is_url_valid(link):
     '''
     Reject a link if
         - empty
@@ -14,12 +14,12 @@ def check_if_invalid(link):
     '''
     if not link or any(ext in link for ext in ('.pdf', 'docx')) \
             or link.startswith('mailto:') or ('#' in link):
-        return True
-    else:
         return False
+    else:
+        return True
 
 
-def url_clean_up(parent_url, link):
+def get_clean_url(parent_url, link):
     '''
     Clean up url by
         - complete relative links

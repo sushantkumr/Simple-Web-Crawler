@@ -2,15 +2,15 @@ from bs4 import BeautifulSoup, SoupStrainer
 from urllib.request import urlopen
 from urllib.error import HTTPError, URLError
 from ordered_set import OrderedSet
-from helpers import check_if_invalid, url_clean_up
+from helpers import is_url_valid, get_clean_url
 
 
 class Crawler():
 
     def __init__(self, url, depth=25):
         self.crawled_urls = OrderedSet([])
-        if (not check_if_invalid(url)):
-            url = url_clean_up(url, '')
+        if (is_url_valid(url)):
+            url = get_clean_url(url, '')
             self.depth = depth
             self.index = 0
             self.crawled_urls.add(url)
@@ -23,7 +23,7 @@ class Crawler():
 
     def crawl(self, url):
         '''
-        Crawl for URLs
+        Crawl over URLs
             - scrape for anchor tags with hrefs in a webpage
             - reject if unwanted or cleanup the obtained links
             - append to a set to remove duplicates
@@ -38,12 +38,12 @@ class Crawler():
             soup = BeautifulSoup(content, 'lxml', parse_only=SoupStrainer('a'))
             for anchor in soup.find_all('a'):
                 link = anchor.get('href')
-                if check_if_invalid(link):
-                    pass
-                else:
+                if is_url_valid(link):
                     # Complete relative URLs
-                    link = url_clean_up(url, link)
+                    link = get_clean_url(url, link)
                     found_urls.append(link)
+                else:
+                    pass
 
         except HTTPError as e:
             print('HTTPError:' + str(e.code) + ' in ', url)
@@ -64,9 +64,3 @@ class Crawler():
                 self.crawl(self.crawled_urls[self.index])
             else:
                 return
-
-
-if __name__ == '__main__':
-    url = "http://mix.com"
-    depth = 1000
-    obj = Crawler(url, depth)
